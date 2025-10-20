@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <script>//Crie um programa onde o usuário possa cadastrar estudantes sem limites, e, em seguida, Se o usuário digitar "PARE" o programa deve exibir a quantidade de estudantes cadastrados e a lista com cada um deles.  -->
+
+        const estudantes = new Array();
+        function exibirEstudantes() {
+            let mensagem = `Total de estudantes cadastrados: ${estudantes.length}\nLista de estudantes:\n`;
+            estudantes.forEach((estudante, index) => {
+                mensagem += `${index + 1}. ${estudante}\n`;
+            });
+            alert(mensagem);
+        }
+        promptEstudante();
+        function promptEstudante() {
+            const nome = prompt("Digite o nome do estudante ou 'PARE' para finalizar:");
+            if (nome.toUpperCase() === "PARE") {
+                exibirEstudantes();
+            } else {
+                estudantes.push(nome);
+                promptEstudante();
+            }
+        }
+        
+
+
+
+
+    </script>
+</body>
+</html>

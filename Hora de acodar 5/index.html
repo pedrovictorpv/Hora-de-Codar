@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <script>
+        // --- VARIÁVEIS GLOBAIS ---
+        // Estas variáveis guardam as informações principais do usuário durante toda a execução.
+        var nome;
+        var saldo = 1000.50; // Saldo inicial para teste
+        var extrato = [     // Um histórico de transações fictícias para o extrato
+            "Compra na Padaria: -R$ 15.70",
+            "Depósito Salário: +R$ 850.00",
+            "Pagamento Conta de Luz: -R$ 120.35"
+        ];
+        const SENHA_CORRETA = "3589"; // A senha para operações seguras.
+
+
+        // --- FUNÇÃO DE VALIDAÇÃO DE SENHA ---
+        // Função reutilizável para proteger operações importantes.
+        function validar_senha() {
+            var senha_inserida = prompt('Para continuar, por favor, digite sua senha:');
+            if (senha_inserida === SENHA_CORRETA) {
+                return true; // Retorna verdadeiro se a senha estiver correta
+            } else {
+                alert('Senha incorreta. Tente novamente.');
+                return false; // Retorna falso se a senha estiver errada
+            }
+        }
+
+        // --- FUNÇÕES DAS OPERAÇÕES DO CAIXA ---
+
+        // Função para visualizar o saldo atual
+        function ver_saldo() {
+            if (validar_senha()) { // Só executa se a senha for válida
+                alert('Seu saldo atual é: R$ ' + saldo.toFixed(2));
+                inicio();
+            } else {
+                ver_saldo(); // Se a senha for errada, pede a senha de novo
+            }
+        }
+
+        // Função para visualizar o histórico de transações
+        function ver_extrato() {
+            if (validar_senha()) { // Só executa se a senha for válida
+                var historico = "--- SEU EXTRATO ---\n\n";
+                // Percorre a lista (array) de transações e monta uma string para exibição
+                for (var i = 0; i < extrato.length; i++) {
+                    historico += extrato[i] + "\n";
+                }
+                historico += "\n---------------------\n";
+                historico += "Saldo Atual: R$ " + saldo.toFixed(2);
+                alert(historico);
+                inicio();
+            } else {
+                ver_extrato(); // Se a senha for errada, pede a senha de novo
+            }
+        }
+
+        // Função para realizar um saque
+        function fazer_saque() {
+            if (!validar_senha()) { // Se a senha for inválida, tenta de novo
+                fazer_saque();
+                return; // Encerra a execução atual para evitar bugs
+            }
+            
+            var saque = parseFloat(prompt('Qual o valor para saque?'));
+
+            // Validação do valor do saque
+            if (isNaN(saque) || saque <= 0) {
+                alert('Operação não autorizada. Por favor, informe um valor válido e maior que zero.');
+                inicio();
+            } else if (saque > saldo) {
+                alert('Operação não autorizada. Saldo insuficiente.');
+                inicio();
+            } else {
+                saldo -= saque;
+                extrato.push("Saque: -R$ " + saque.toFixed(2)); // Adiciona a operação ao extrato
+                alert('Saque de R$ ' + saque.toFixed(2) + ' realizado com sucesso.');
+                ver_saldo();
+            }
+        }
+
+        // Função para realizar um depósito
+        function fazer_deposito() {
+            var deposito = parseFloat(prompt('Qual o valor para depósito?'));
+
+            // Validação do valor do depósito
+            if (isNaN(deposito) || deposito <= 0) {
+                alert('Operação não autorizada. Por favor, informe um valor válido e maior que zero.');
+                inicio();
+            } else {
+                saldo += deposito;
+                extrato.push("Depósito: +R$ " + deposito.toFixed(2)); // Adiciona a operação ao extrato
+                alert('Depósito de R$ ' + deposito.toFixed(2) + ' realizado com sucesso.');
+                ver_saldo();
+            }
+        }
+        
+        // Função para realizar uma transferência
+        function fazer_transferencia() {
+             if (!validar_senha()) { // Se a senha for inválida, tenta de novo
+                fazer_transferencia();
+                return; 
+            }
+
+            var conta_destino = parseInt(prompt('Digite o número da conta para a transferência:'));
+
+            // Valida se a conta é um número válido
+            if(isNaN(conta_destino)){
+                alert('Operação não autorizada. Número de conta inválido.');
+                inicio();
+                return;
+            }
+
+            var valor_transferencia = parseFloat(prompt('Qual o valor para transferência?'));
+
+            // Validações do valor da transferência
+            if (isNaN(valor_transferencia) || valor_transferencia <= 0) {
+                alert('Operação não autorizada. Por favor, informe um valor válido e maior que zero.');
+                inicio();
+            } else if (valor_transferencia > saldo) {
+                alert('Operação não autorizada. Saldo insuficiente.');
+                inicio();
+            } else {
+                saldo -= valor_transferencia;
+                extrato.push("Transferência para conta " + conta_destino + ": -R$ " + valor_transferencia.toFixed(2));
+                alert('Transferência de R$ ' + valor_transferencia.toFixed(2) + ' realizada com sucesso.');
+                ver_saldo();
+            }
+        }
+
+        // Função para lidar com opções inválidas no menu
+        function erro() {
+            alert('Por favor, informe um número entre 1 e 6.');
+            inicio();
+        }
+
+        // Função para encerrar o sistema
+        function sair() {
+            var confirma = confirm('Você deseja sair?');
+            if (confirma) {
+                alert(nome + ', foi um prazer ter você por aqui!');
+                window.close();
+            } else {
+                inicio();
+            }
+        }
+        
+        // --- FUNÇÃO PRINCIPAL (MENU) ---
+        // Esta função controla o fluxo principal do programa.
+        function inicio() {
+            var escolha = parseInt(prompt(
+                'Selecione uma opção:\n' +
+                '1. Saldo\n' +
+                '2. Extrato\n' +
+                '3. Saque\n' +
+                '4. Depósito\n' +
+                '5. Transferência\n' +
+                '6. Sair'
+            ));
+
+            // Usando switch/case para lidar com a escolha do usuário
+            switch (escolha) {
+                case 1:
+                    ver_saldo();
+                    break;
+                case 2:
+                    ver_extrato();
+                    break;
+                case 3:
+                    fazer_saque();
+                    break;
+                case 4:
+                    fazer_deposito();
+                    break;
+                case 5:
+                    fazer_transferencia();
+                    break;
+                case 6:
+                    sair();
+                    break;
+                default:
+                    erro(); // Chama a função de erro se a opção for inválida
+                    break;
+            }
+        }
+
+        // --- INÍCIO DA EXECUÇÃO DO SCRIPT ---
+        nome = prompt('Olá! Por favor, digite seu nome:');
+        alert(nome + ', é um prazer ter você por aqui!');
+        inicio();
+
+    </script>
+</body>
+</html>
